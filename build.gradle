@@ -21,8 +21,10 @@ repositories {
 	mavenCentral()
 }
 
-
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter')
+	compile group: 'org.jsoup', name: 'jsoup', version: '1.10.3'
+	compile group: 'com.github.jknack', name: 'handlebars', version: '4.0.6'
+	compile group: 'com.github.jknack', name: 'handlebars-springmvc', version: '4.0.6'
+	compile('org.springframework.boot:spring-boot-starter-web')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
