@@ -48,7 +48,7 @@ public class MainController
            }
 
 
-           sb.append(System.getProperty("line.separator"));
+           sb.append("<br/>");
        }
 
         return sb.toString();
