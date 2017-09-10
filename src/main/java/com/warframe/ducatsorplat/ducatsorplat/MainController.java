@@ -11,7 +11,7 @@ import java.util.ArrayList;
 @RestController
 public class MainController
 {
-    @RequestMapping("/")
+    @RequestMapping("/ducats")
     public String getDucatValues()
     {
         StringBuilder sb = new StringBuilder();
