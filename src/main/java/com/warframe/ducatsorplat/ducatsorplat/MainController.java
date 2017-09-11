@@ -1,19 +1,15 @@
 package com.warframe.ducatsorplat.ducatsorplat;
 
 import com.google.gson.Gson;
-import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 import org.springframework.web.bind.annotation.*;
 import org.jsoup.nodes.Document;
 import org.jsoup.*;
-import javax.xml.crypto.Data;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.lang.reflect.Array;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,11 +20,9 @@ public class MainController
     @ResponseBody
     public List<Item> getDucatValues()
     {
-//      StringBuilder sb = new StringBuilder();
         ArrayList<Item> items = new ArrayList<>();
 
         try {
-
             Document doc = Jsoup.connect("http://warframe.wikia.com/wiki/Ducats/Prices").get();
             Elements names = doc.select("#mw-customcollapsible-ducatsprices td:nth-of-type(1)");
             Elements ducatValues = doc.select("td:nth-of-type(3) span");
@@ -43,21 +37,6 @@ public class MainController
         }
         catch (java.io.IOException ex) {
         }
-
-//       for (Item i : items) {
-//           sb.append(i.getName());
-//           sb.append(": ");
-//
-//           if(i.getPlatValue() != null) {
-//               sb.append(i.getPlatValue().toString() + "p");
-//           }
-//
-//           if(i.getDucatValue() != null) {
-//               sb.append(i.getDucatValue().toString() + "d");
-//           }
-//
-//           sb.append("<br/>");
-//       }
 
         return items;
     }
