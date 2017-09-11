@@ -53,8 +53,8 @@ public class MainController
                 Reader reader = new InputStreamReader(input, "UTF-8");
                 data = new Gson().fromJson(reader, MarketValue.class);
 
-                OptionalInt buyValue = data.getResponse().getBuy().stream().filter(b -> b.online_status == true).mapToInt(b -> b.getPrice()).max();
-                OptionalInt sellValue = data.getResponse().getSell().stream().filter(b -> b.online_status == true).mapToInt(b -> b.getPrice()).min();
+                OptionalInt buyValue = data.getResponse().getBuy().stream().filter(b -> b.online_status).mapToInt(b -> b.getPrice()).max();
+                OptionalInt sellValue = data.getResponse().getSell().stream().filter(b -> b.online_status).mapToInt(b -> b.getPrice()).min();
 
                 if (buyValue.isPresent() && sellValue.isPresent()) {
                     i.setPlatValue(Math.round((buyValue.getAsInt() + sellValue.getAsInt()) / 2.0f));
