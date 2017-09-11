@@ -1,21 +1,31 @@
 package com.warframe.ducatsorplat.ducatsorplat;
 
+import com.google.gson.Gson;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 import org.springframework.web.bind.annotation.*;
 import org.jsoup.nodes.Document;
 import org.jsoup.*;
+import javax.xml.crypto.Data;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.lang.reflect.Array;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class MainController
 {
     @RequestMapping("/ducats")
-    public String getDucatValues()
+    @ResponseBody
+    public List<Item> getDucatValues()
     {
-        StringBuilder sb = new StringBuilder();
-        ArrayList<Item> items = new ArrayList<Item>();
+//      StringBuilder sb = new StringBuilder();
+        ArrayList<Item> items = new ArrayList<>();
 
         try {
 
@@ -26,31 +36,45 @@ public class MainController
             for (int i = 0; i < names.size(); i++) {
 
                 Item newItem = new Item();
-                newItem.setName(names.get(i).attributes().get("data-sort-value"));
+                newItem.setName(((TextNode)names.get(i).childNode(2).childNode(0)).text());
                 newItem.setDucatValue(Integer.parseInt(((TextNode)ducatValues.get(i).childNode(0)).text()));
                 items.add(newItem);
             }
-
         }
         catch (java.io.IOException ex) {
         }
 
-       for (Item i : items) {
-           sb.append(i.getName());
-           sb.append(": ");
+//       for (Item i : items) {
+//           sb.append(i.getName());
+//           sb.append(": ");
+//
+//           if(i.getPlatValue() != null) {
+//               sb.append(i.getPlatValue().toString() + "p");
+//           }
+//
+//           if(i.getDucatValue() != null) {
+//               sb.append(i.getDucatValue().toString() + "d");
+//           }
+//
+//           sb.append("<br/>");
+//       }
 
-           if(i.getPlatValue() != null) {
-               sb.append(i.getPlatValue().toString() + "p");
-           }
+        return items;
+    }
 
-           if(i.getDucatValue() != null) {
-               sb.append(i.getDucatValue().toString() + "d");
-           }
+    @RequestMapping("/plat")
+    @ResponseBody
+    public MarketValue getPlatValues() {
+        MarketValue data = new MarketValue();
+        List<Item> items = getDucatValues();
+        try {
+            InputStream input = new URL("http://warframe.market/api/get_orders/Blueprint/" + items.get(0).getName().replace(" ", "%20")).openStream();
+            Reader reader = new InputStreamReader(input, "UTF-8");
+            data = new Gson().fromJson(reader, MarketValue.class);
+        }
+        catch (java.io.IOException ex) {
+        }
 
-
-           sb.append("<br/>");
-       }
-
-        return sb.toString();
+        return data;
     }
 }
