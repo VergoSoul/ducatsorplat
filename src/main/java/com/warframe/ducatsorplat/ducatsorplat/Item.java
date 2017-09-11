@@ -1,10 +1,10 @@
 package com.warframe.ducatsorplat.ducatsorplat;
 
 import lombok.Data;
-
+import java.io.Serializable;
 
 @Data
-public class Item {
+public class Item implements Serializable {
     private String name;
     private Integer platValue;
     private Integer ducatValue;
