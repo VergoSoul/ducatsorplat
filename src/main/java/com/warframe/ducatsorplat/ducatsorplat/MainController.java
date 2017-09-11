@@ -12,6 +12,7 @@ import java.io.Reader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalInt;
 
 @RestController
 public class MainController
@@ -47,9 +48,16 @@ public class MainController
         MarketValue data = new MarketValue();
         List<Item> items = getDucatValues();
         try {
-            InputStream input = new URL("http://warframe.market/api/get_orders/Blueprint/" + items.get(0).getName().replace(" ", "%20")).openStream();
-            Reader reader = new InputStreamReader(input, "UTF-8");
-            data = new Gson().fromJson(reader, MarketValue.class);
+            for (Item i : items) {
+                InputStream input = new URL("http://warframe.market/api/get_orders/Blueprint/" + i.getName().replace(" ", "%20")).openStream();
+                Reader reader = new InputStreamReader(input, "UTF-8");
+                data = new Gson().fromJson(reader, MarketValue.class);
+
+                OptionalInt buyValue = data.getResponse().getBuy().stream().filter(b -> b.online_status == true).mapToInt(b -> b.getPrice()).max();
+                OptionalInt sellValue = data.getResponse().getSell().stream().filter(b -> b.online_status == true).mapToInt(b -> b.getPrice()).min();
+
+                i.setPlatValue(Math.round((buyValue.getAsInt() + sellValue.getAsInt()) / 2.0f));
+            }
         }
         catch (java.io.IOException ex) {
         }
