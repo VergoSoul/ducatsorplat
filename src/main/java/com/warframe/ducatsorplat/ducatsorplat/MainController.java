@@ -1,7 +1,6 @@
 package com.warframe.ducatsorplat.ducatsorplat;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
@@ -20,8 +19,7 @@ public class MainController
 
         String bucketName     = "ducats-or-plat-data";
         String keyName        = "itemvalues";
-        BasicAWSCredentials awsCreds = new BasicAWSCredentials("AKIAJSL4EWRWIJD6ACVA", "4xIcyH160eYdE2NsDpG+O1/K3jo28SBUilPO8QIl");
-        AmazonS3 s3client =  AmazonS3ClientBuilder.standard().withRegion(Regions.US_WEST_2).withCredentials(new AWSStaticCredentialsProvider(awsCreds)).build();
+        AmazonS3 s3client =  AmazonS3ClientBuilder.standard().withRegion(Regions.US_WEST_2).withCredentials(new EnvironmentVariableCredentialsProvider()).build();
         S3Object object;
         ArrayList<Item> items = null;
 
