@@ -1,148 +1,43 @@
 package com.warframe.ducatsorplat.ducatsorplat;
 
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
-import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
 import com.google.gson.Gson;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.TextNode;
-import org.jsoup.select.Elements;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import com.google.gson.reflect.TypeToken;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.io.*;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.OptionalInt;
 
 @RestController
 public class MainController
 {
-    @RequestMapping("/ducats")
-    @ResponseBody
-    public List<Item> getDucatValues() throws Exception
-    {
-        ArrayList<Item> items = new ArrayList<>();
-        HashMap<String, String> nameCheck = new HashMap<String, String>() {
-            {
-                put("Boltor Prime Receiver", "Boltor Prime Reciever");
-                put("Kavasa Prime Band", "Kavasa Prime Collar Band");
-                put("Kavasa Prime Buckle", "Kavasa Prime Collar Buckle");
-                put("Lex Prime Receiver", "Lex Prime Reciever");
-                put("Paris Prime Lower Limb", "Paris Prime  Lower Limb");
-                put("Paris Prime Grip", "Paris Prime  Grip");
-            }
-        };
-
-        Document doc = Jsoup.connect("http://warframe.wikia.com/wiki/Ducats/Prices").get();
-        Elements names = doc.select("#mw-customcollapsible-ducatsprices td:nth-of-type(1)");
-        Elements ducatValues = doc.select("td:nth-of-type(3) span");
-
-        for (int i = 0; i < names.size(); i++) {
-            Item newItem = new Item();
-            newItem.setName(((TextNode)names.get(i).childNode(2).childNode(0)).text());
-
-            if (nameCheck.containsKey(newItem.getName())) {
-                newItem.setName(nameCheck.get(newItem.getName()));
-            }
-
-            newItem.setDucatValue(Integer.parseInt(((TextNode)ducatValues.get(i).childNode(0)).text()));
-            items.add(newItem);
-        }
-
-        return items;
-    }
-
-    @RequestMapping("/plat")
-    @ResponseBody
-    public MarketValue getPlatValues() throws Exception {
-        MarketValue data = new MarketValue();
-        List<Item> items = getDucatValues();
-
-//        for (Item i : items) {
-//            InputStream input;
-//
-//            if (i.getName().contains("Helios")) {
-//                input = new URL("http://warframe.market/api/get_orders/Set/" + i.getName().replace(" ", "%20")).openStream();
-//            }
-//            else {
-//                input = new URL("http://warframe.market/api/get_orders/Blueprint/" + i.getName().replace(" ", "%20")).openStream();
-//            }
-//
-//            Reader reader = new InputStreamReader(input, "UTF-8");
-//
-//            try {
-//                data = new Gson().fromJson(reader, MarketValue.class);
-//            }
-//            catch (Exception ex) {
-//                System.out.println(i.getName());
-//            }
-//
-//            OptionalInt buyValue = data.getResponse().getBuy().stream().filter(b -> b.online_status).mapToInt(b -> b.getPrice()).max();
-//            OptionalInt sellValue = data.getResponse().getSell().stream().filter(b -> b.online_status).mapToInt(b -> b.getPrice()).min();
-//
-//            if (buyValue.isPresent() && sellValue.isPresent()) {
-//                i.setPlatValue(Math.round((buyValue.getAsInt() + sellValue.getAsInt()) / 2.0f));
-//            }
-//        }
+    public ArrayList<Item> GetData() {
 
         String bucketName     = "ducats-or-plat-data";
         String keyName        = "itemvalues";
-
         BasicAWSCredentials awsCreds = new BasicAWSCredentials("AKIAJSL4EWRWIJD6ACVA", "4xIcyH160eYdE2NsDpG+O1/K3jo28SBUilPO8QIl");
-
         AmazonS3 s3client =  AmazonS3ClientBuilder.standard().withRegion(Regions.US_WEST_2).withCredentials(new AWSStaticCredentialsProvider(awsCreds)).build();
-        ObjectMetadata meta = new ObjectMetadata();
-        InputStream is;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(baos);
-
-        oos.writeObject(items);
-        oos.flush();
-        oos.close();
-
-        is = new ByteArrayInputStream(baos.toByteArray());
-
-        Long contentLength = Long.valueOf(baos.toByteArray().length);
-
-        meta.setContentLength(contentLength);
+        S3Object object;
+        ArrayList<Item> items = null;
 
         try {
             System.out.println("Uploading a new object to S3 from a file\n");
-            s3client.putObject(new PutObjectRequest(bucketName, keyName, is, meta));
+            object = s3client.getObject(new GetObjectRequest(bucketName, keyName));
+            InputStream objectData = object.getObjectContent();
+            Reader reader = new InputStreamReader(objectData, "UTF-8");
+            items = new Gson().fromJson(reader, new TypeToken<ArrayList<Item>>() {}.getType());
+            items.toString();
 
-        } catch (AmazonServiceException ase) {
-            System.out.println("Caught an AmazonServiceException, which " +
-                    "means your request made it " +
-                    "to Amazon S3, but was rejected with an error response" +
-                    " for some reason.");
+        } catch (Exception ase) {
+            System.out.println("Error Getting Data");
             System.out.println("Error Message:    " + ase.getMessage());
-            System.out.println("HTTP Status Code: " + ase.getStatusCode());
-            System.out.println("AWS Error Code:   " + ase.getErrorCode());
-            System.out.println("Error Type:       " + ase.getErrorType());
-            System.out.println("Request ID:       " + ase.getRequestId());
-        } catch (AmazonClientException ace) {
-            System.out.println("Caught an AmazonClientException, which " +
-                    "means the client encountered " +
-                    "an internal error while trying to " +
-                    "communicate with S3, " +
-                    "such as not being able to access the network.");
-            System.out.println("Error Message: " + ace.getMessage());
         }
 
-        return data;
+        return items;
     }
 }
