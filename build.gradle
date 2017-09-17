@@ -22,6 +22,7 @@ repositories {
 }
 
 dependencies {
+	compile("org.thymeleaf:thymeleaf-spring4")
 	compile group: 'com.amazonaws', name: 'aws-java-sdk', version: '1.11.192'
 	compile 'com.amazonaws:aws-java-sdk-s3'
 	compileOnly "org.projectlombok:lombok:1.16.16"

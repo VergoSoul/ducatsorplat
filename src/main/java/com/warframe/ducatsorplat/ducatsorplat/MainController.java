@@ -8,13 +8,19 @@ import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 import java.io.*;
 import java.util.ArrayList;
 
-@RestController
+@Controller
 public class MainController
 {
+    @RequestMapping(value = "/")
+    public String index() {
+        return "index";
+    }
+
     public ArrayList<Item> GetData() {
 
         String bucketName     = "ducats-or-plat-data";
