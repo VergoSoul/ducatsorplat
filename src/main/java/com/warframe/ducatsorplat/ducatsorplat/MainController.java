@@ -8,6 +8,8 @@ import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import java.io.*;
 import java.util.ArrayList;
@@ -15,6 +17,8 @@ import java.util.ArrayList;
 @RestController
 public class MainController
 {
+    @RequestMapping("/data")
+    @ResponseBody
     public ArrayList<Item> GetData() {
 
         String bucketName     = "ducats-or-plat-data";
