@@ -1,56 +1,23 @@
-import fetch from 'isomorphic-fetch'
+import request from 'superagent'
 import * as types from '../constants/actionTypes'
 
-export function selectItems() {
-    return {
-        type: types.SELECT_ITEMS,
-    }
-}
+const receiveItems = items => ({
+    type: types.RECEIVE_ITEMS,
+    items: items
+})
 
-export function invalidateItems() {
-    return {
-        type: types.INVALIDATE_ITEMS,
-    }
-}
+var ITEMS = [ {name:"Gun", ducatValue:100, platValue:46}, {name:"Gun2", ducatValue:50, platValue:100} ];
 
-function requestItems() {
-    return {
-        type: types.REQUEST_ITEMS,
-    }
-}
-
-function receiveItems(json) {
-    return {
-        type: types.RECEIVE_ITEMS,
-        items: json.data.children.map(child => child.data),
-        receivedAt: Date.now()
-    }
-}
-
-function fetchItems() {
-    return dispatch => {
-        dispatch(requestItems())
-        return fetch('https://www.reddit.com/r/gamedeals.json')
-            .then(response => response.json())
-            .then(json => dispatch(receiveItems(json)))
-    }
-}
-
-function shouldFetchItems(state) {
-    const items = state.items
-    if (!items) {
-        return true
-    } else if (items.isFetching) {
-        return false
-    } else {
-        return items.didInvalidate
-    }
-}
-
-export function fetchItemsIfNeeded() {
-    return (dispatch, getState) => {
-        if (shouldFetchItems(getState())) {
-            return dispatch(fetchItems())
-        }
-    }
+export const getAllItems = () => dispatch => {
+    request
+        .get('localhost:8080/data')
+        .end(function (err, res) {
+            if (err || !res.ok) {
+                alert('Oh no! error' + err.message);
+                dispatch(receiveItems(ITEMS))
+            } else {
+                alert('yay got ' + JSON.stringify(res.body));
+                dispatch(receiveItems(res.body));
+            }
+        })
 }
