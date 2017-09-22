@@ -7,8 +7,8 @@ function items(state = {}, action) {
         default:
             return state;
     }
-}
+};
 
-const rootReducer = items
+const rootReducer = items;
 
-export default rootReducer
+export default rootReducer;

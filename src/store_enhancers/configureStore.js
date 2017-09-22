@@ -11,4 +11,4 @@ export default function configureStore(initialState) {
     const store = createStore(rootReducer, initialState, applyMiddleware(thunkMiddleware, loggerMiddleware));
     console.log(store.getState());
     return store;
-}
+};

@@ -4,7 +4,7 @@ import * as types from '../constants/actionTypes'
 const receiveItems = items => ({
     type: types.RECEIVE_ITEMS,
     items: items
-})
+});
 
 var ITEMS = [ {name:"Gun", ducatValue:100, platValue:46}, {name:"Gun2", ducatValue:50, platValue:100} ];
 
@@ -20,4 +20,4 @@ export const getAllItems = () => dispatch => {
                 dispatch(receiveItems(res.body));
             }
         })
-}
+};

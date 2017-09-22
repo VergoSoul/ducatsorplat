@@ -19,7 +19,7 @@ class Root extends React.Component {
             </Provider>
         )
     }
-}
+};
 
 ReactDOM.render(
     <Root />,

@@ -27,12 +27,12 @@ ItemTable.propTypes = {
         ducatValue: PropTypes.number.isRequired,
         platValue: PropTypes.number.isRequired
     })).isRequired
-}
+};
 
 const mapStateToProps = state => ({
     items: state
-})
+});
 
 export default connect(
     mapStateToProps
-)(ItemTable)
+)(ItemTable);

@@ -15,6 +15,6 @@ ItemRow.propTypes = {
         ducatValue: PropTypes.number.isRequired,
         platValue: PropTypes.number.isRequired
     }).isRequired
-}
+};
 
-export default ItemRow
+export default ItemRow;
