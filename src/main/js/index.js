@@ -5,7 +5,7 @@ import configureStore from '../../store_enhancers/configureStore';
 import ItemTable from './ItemTable'
 import { getAllItems } from '../../actions/actions'
 
-var ITEMS = [ {name:"Gun", ducatValue:100, platValue:46} ];
+var ITEMS = [ {name:"Gun", ducatValue:100, platValue:46, message:""} ];
 
 const store = configureStore(ITEMS);
 

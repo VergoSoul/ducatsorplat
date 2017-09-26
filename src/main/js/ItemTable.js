@@ -10,6 +10,7 @@ const ItemTable = ({ items }) => (
             <th>Name</th>
             <th>Ducat Value</th>
             <th>Plat Value</th>
+            <th>Message</th>
         </tr>
         </thead>
         <tbody>
@@ -25,7 +26,8 @@ ItemTable.propTypes = {
     items: PropTypes.arrayOf( PropTypes.shape({
         name: PropTypes.string.isRequired,
         ducatValue: PropTypes.number.isRequired,
-        platValue: PropTypes.number.isRequired
+        platValue: PropTypes.number.isRequired,
+        message: PropTypes.string.isRequired
     })).isRequired
 };
 

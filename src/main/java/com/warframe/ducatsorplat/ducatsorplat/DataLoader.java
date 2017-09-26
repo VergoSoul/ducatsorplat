@@ -87,7 +87,18 @@ public class DataLoader implements Runnable {
 
             if (buyValue.isPresent() && sellValue.isPresent()) {
                 i.setPlatValue(Math.round((buyValue.getAsInt() + sellValue.getAsInt()) / 2.0f));
+            } else if (buyValue.isPresent()) {
+                i.setPlatValue(Math.round(buyValue.getAsInt()));
+                i.setMessage("No Sellers");
+            } else if (sellValue.isPresent()) {
+                i.setPlatValue(Math.round(sellValue.getAsInt()));
+                i.setMessage("No Buyers");
+            } else {
+                i.setPlatValue(0);
+                i.setMessage("No Buyers or Sellers");
             }
+
+
         }
 
         SaveData(items);
